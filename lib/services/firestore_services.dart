@@ -1,7 +1,23 @@
 import 'package:emart_app/consts/consts.dart';
 import 'package:emart_app/consts/firebase_consts.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
 
 class FirestoreServices {
+  static Future<String> uploadImage(String filePath) async {
+    File file = File(filePath);
+    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+
+    Reference storageReference =
+        FirebaseStorage.instance.ref().child('chat_images/$fileName');
+
+    UploadTask uploadTask = storageReference.putFile(file);
+
+    await uploadTask.whenComplete(() => null);
+
+    return storageReference.getDownloadURL();
+  }
+
   //get users data
   static getUser(uid) {
     return firestore

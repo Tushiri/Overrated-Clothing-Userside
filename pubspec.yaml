@@ -46,7 +46,10 @@ dependencies:
   path: ^1.8.2
   http: ^0.13.6
   logger: ^2.0.2+1
-  paymongo_sdk: ^1.6.1
+  path_provider: ^2.0.14
+  image_gallery_saver: ^2.0.1
+  image: ^3.0.1
+
 
 
 dev_dependencies:

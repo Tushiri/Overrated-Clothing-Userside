@@ -5,6 +5,7 @@ import 'package:emart_app/services/firestore_services.dart';
 import 'package:emart_app/views/chat_screen/components/sender_bubble.dart';
 import 'package:emart_app/widgets_common/loading_indicator.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -14,9 +15,30 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  final ImagePicker _imagePicker = ImagePicker();
+  late ChatsController controller;
+
+  final ScrollController _scrollController = ScrollController();
+
+  Future<void> _pickImage() async {
+    final XFile? image = await _imagePicker.pickImage(
+      source: ImageSource.gallery,
+    );
+
+    if (image != null) {
+      String imageUrl = await FirestoreServices.uploadImage(image.path);
+      controller.sendImage(imageUrl);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(ChatsController());
+  }
+
   @override
   Widget build(BuildContext context) {
-    var controller = Get.put(ChatsController());
     return Scaffold(
       backgroundColor: whiteColor,
       appBar: AppBar(
@@ -41,9 +63,14 @@ class _ChatScreenState extends State<ChatScreen> {
                             controller.chatDocId.toString()),
                         builder: (BuildContext context,
                             AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (!snapshot.hasData) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
                             return Center(
                               child: loadingIndicator(),
+                            );
+                          } else if (snapshot.hasError) {
+                            return Center(
+                              child: Text('Error: ${snapshot.error}'),
                             );
                           } else if (snapshot.data!.docs.isEmpty) {
                             return Center(
@@ -53,17 +80,28 @@ class _ChatScreenState extends State<ChatScreen> {
                                   .make(),
                             );
                           } else {
-                            return ListView(
-                              children: snapshot.data!.docs
-                                  .mapIndexed((currentValue, index) {
-                                var data = snapshot.data!.docs[index];
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              _scrollController.jumpTo(
+                                _scrollController.position.maxScrollExtent,
+                              );
+                            });
+
+                            return ListView.builder(
+                              reverse: false,
+                              controller: _scrollController,
+                              itemCount: snapshot.data!.docs.length,
+                              itemBuilder: (context, index) {
+                                var document = snapshot.data!.docs[index];
+                                var data =
+                                    document.data() as Map<String, dynamic>;
 
                                 return Align(
-                                    alignment: data['uid'] == currentUser!.uid
-                                        ? Alignment.centerRight
-                                        : Alignment.centerLeft,
-                                    child: senderBubble(data));
-                              }).toList(),
+                                  alignment: data['uid'] == currentUser?.uid
+                                      ? Alignment.centerRight
+                                      : Alignment.centerLeft,
+                                  child: senderBubble(document),
+                                );
+                              },
                             );
                           }
                         },
@@ -74,26 +112,34 @@ class _ChatScreenState extends State<ChatScreen> {
             Row(
               children: [
                 Expanded(
-                    child: TextFormField(
-                  controller: controller.msgController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
+                  child: TextFormField(
+                    controller: controller.msgController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(
                         borderSide: BorderSide(
-                      color: textfieldGrey,
-                    )),
-                    focusedBorder: OutlineInputBorder(
+                          color: textfieldGrey,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                      color: textfieldGrey,
-                    )),
-                    hintText: "Type a message...",
+                          color: textfieldGrey,
+                        ),
+                      ),
+                      hintText: "Type a message...",
+                    ),
                   ),
-                )),
+                ),
                 IconButton(
-                    onPressed: () {
-                      controller.sendMsg(controller.msgController.text);
-                      controller.msgController.clear();
-                    },
-                    icon: const Icon(Icons.send, color: blackcolor)),
+                  onPressed: _pickImage,
+                  icon: const Icon(Icons.image, color: blackcolor),
+                ),
+                IconButton(
+                  onPressed: () {
+                    controller.sendMsg(controller.msgController.text);
+                    controller.msgController.clear();
+                  },
+                  icon: const Icon(Icons.send, color: blackcolor),
+                ),
               ],
             )
                 .box

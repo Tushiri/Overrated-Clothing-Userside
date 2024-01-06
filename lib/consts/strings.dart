@@ -78,4 +78,4 @@ const wishlist = "My Wishlist",
 
 //payment methods strings
 
-const gcash = "G Cash", pickup = "Pick Up", cod = "Cash on Delivery";
+const gcash = "G Cash", paymaya = "PayMaya", cod = "Cash on Delivery";

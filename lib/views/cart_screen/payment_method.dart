@@ -3,7 +3,8 @@
 import 'package:emart_app/consts/consts.dart';
 import 'package:emart_app/consts/lists.dart';
 import 'package:emart_app/controllers/cart_controller.dart';
-import 'package:emart_app/views/home_screen/home.dart';
+import 'package:emart_app/views/chat_screen/chat_screen.dart';
+
 import 'package:emart_app/widgets_common/loading_indicator.dart';
 import 'package:emart_app/widgets_common/our_button.dart';
 import 'package:get/get.dart';
@@ -14,6 +15,7 @@ class PaymentMethods extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var controller = Get.find<CartController>();
+
     return Obx(
       () => Scaffold(
         backgroundColor: whiteColor,
@@ -32,7 +34,7 @@ class PaymentMethods extends StatelessWidget {
 
                     await controller.clearCart();
                     VxToast.show(context, msg: "Order Placed successfully");
-                    Get.offAll(const Home());
+                    Get.offAll(const ChatScreen());
                   },
                   color: blackcolor,
                   textColor: whiteColor,

@@ -45,5 +45,5 @@ const itemDetailButtonsList = [
 const profileButtonsList = [orders, wishlist, messages];
 const profileButtonsIcon = [icOrders, icOrder, icMessages];
 
-const paymentMethodsImg = [imgPaypal, imgStripe, imgCod];
-const paymentMethods = [gcash, pickup, cod];
+const paymentMethodsImg = [imgGcash, imgPayMaya, imgCod];
+const paymentMethods = [gcash, paymaya, cod];

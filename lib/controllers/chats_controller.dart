@@ -1,9 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emart_app/consts/consts.dart';
 import 'package:emart_app/controllers/home_controller.dart';
+import 'package:emart_app/services/firestore_services.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ChatsController extends GetxController {
+  final ImagePicker _imagePicker = ImagePicker();
+
   @override
   void onInit() {
     getChatId();
@@ -40,7 +44,7 @@ class ChatsController extends GetxController {
               'toId': '',
               'fromId': '',
               'friend_name': friendName,
-              'sender_name': senderName
+              'sender_name': senderName,
             }).then((value) {
               {
                 chatDocId = value.id;
@@ -51,19 +55,48 @@ class ChatsController extends GetxController {
     isLoading(false);
   }
 
+  // ignore: unused_element
+  Future<void> _pickImage() async {
+    final XFile? image = await _imagePicker.pickImage(
+      source: ImageSource.gallery,
+    );
+
+    if (image != null) {
+      String imageUrl = await FirestoreServices.uploadImage(image.path);
+
+      sendImage(imageUrl);
+    }
+  }
+
+  sendImage(String imageUrl) async {
+    chats.doc(chatDocId).update({
+      'created_on': FieldValue.serverTimestamp(),
+      'last_msg': "Sent an Image",
+      'toId': friendId,
+      'fromId': currentId,
+    });
+
+    chats.doc(chatDocId).collection(messagesCollection).doc().set({
+      'created_on': FieldValue.serverTimestamp(),
+      'msg': imageUrl,
+      'uid': currentId,
+      'is_image': true,
+    });
+  }
+
   sendMsg(String msg) async {
     if (msg.trim().isNotEmpty) {
+      chats.doc(chatDocId).collection(messagesCollection).add({
+        'created_on': FieldValue.serverTimestamp(),
+        'msg': msg,
+        'uid': currentId,
+      });
+
       chats.doc(chatDocId).update({
         'created_on': FieldValue.serverTimestamp(),
         'last_msg': msg,
         'toId': friendId,
         'fromId': currentId,
-      });
-
-      chats.doc(chatDocId).collection(messagesCollection).doc().set({
-        'created_on': FieldValue.serverTimestamp(),
-        'msg': msg,
-        'uid': currentId,
       });
     }
   }

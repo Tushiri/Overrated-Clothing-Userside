@@ -2,9 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emart_app/consts/consts.dart';
 import 'package:emart_app/controllers/home_controller.dart';
 import 'package:get/get.dart';
+import 'package:emart_app/views/cart_screen/instructions/gcash_instructions_screen.dart';
+import 'package:emart_app/views/cart_screen/instructions/paymaya_instructions_screen.dart';
+import 'package:logger/logger.dart';
 
 class CartController extends GetxController {
   var totalP = 0.obs;
+
+  final Logger _logger = Logger();
 
   //text controller for shipping details
 
@@ -31,6 +36,16 @@ class CartController extends GetxController {
 
   changePaymentIndex(index) {
     paymentIndex.value = index;
+
+    if (index == 0) {
+      _logger.i("Processing GCash payment...");
+    } else if (index == 1) {
+      _logger.i("Processing PayMaya payment...");
+    } else {
+      _logger.i("Processing other payment methods...");
+    }
+
+    showInstructions(Get.context!, index);
   }
 
   placeMyOrder({required orderPaymentMethod, required totalAmount}) async {
@@ -80,5 +95,33 @@ class CartController extends GetxController {
     for (var i = 0; i < productSnapshot.length; i++) {
       firestore.collection(cartCollection).doc(productSnapshot[i].id).delete();
     }
+  }
+
+  void showInstructions(BuildContext context, int index) {
+    if (index == 0) {
+      showGCashInstructions(context);
+    } else if (index == 1) {
+      showPaymayaInstructions(context);
+    } else {
+      _logger.i("Showing instructions for other payment methods...");
+    }
+  }
+
+  void showGCashInstructions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return GcashInstructionScreen();
+      },
+    );
+  }
+
+  void showPaymayaInstructions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return const PaymayaInstructionScreen();
+      },
+    );
   }
 }
