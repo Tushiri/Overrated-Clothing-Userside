@@ -155,7 +155,7 @@ class OrdersDetails extends StatelessWidget {
                         d2: "Refundable",
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(right: 20.0),
+                        padding: const EdgeInsets.only(left: 15.0),
                         child: Container(
                           width: 40,
                           height: 20,
