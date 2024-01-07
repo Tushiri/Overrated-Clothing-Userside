@@ -15,18 +15,25 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  var controller = Get.put(CartController());
+
+  void proceedToShipping() {
+    if (controller.productSnapshot.isEmpty) {
+      VxToast.show(context, msg: "Cart is Empty");
+    } else {
+      Get.to(() => const ShippingDetails());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    var controller = Get.put(CartController());
     return Scaffold(
       backgroundColor: whiteColor,
       bottomNavigationBar: SizedBox(
         height: 60,
         child: ourButton(
           color: blackcolor,
-          onPress: () {
-            Get.to(() => const ShippingDetails());
-          },
+          onPress: proceedToShipping,
           textColor: whiteColor,
           title: "Proceed to Shipping",
         ),
@@ -45,7 +52,11 @@ class _CartScreenState extends State<CartScreen> {
             );
           } else if (snapshot.data!.docs.isEmpty) {
             return Center(
-              child: "Cart is Empty".text.color(blackcolor).make(),
+              child: "Cart is Empty"
+                  .text
+                  .color(blackcolor)
+                  .fontFamily(semibold)
+                  .make(),
             );
           } else {
             var data = snapshot.data!.docs;

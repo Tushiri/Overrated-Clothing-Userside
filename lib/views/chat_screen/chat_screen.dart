@@ -6,6 +6,8 @@ import 'package:emart_app/views/chat_screen/components/sender_bubble.dart';
 import 'package:emart_app/widgets_common/loading_indicator.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+// ignore: depend_on_referenced_packages
+import 'package:intl/intl.dart' as intl;
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -29,6 +31,34 @@ class _ChatScreenState extends State<ChatScreen> {
       String imageUrl = await FirestoreServices.uploadImage(image.path);
       controller.sendImage(imageUrl);
     }
+  }
+
+  Widget _buildDateSeparator(DateTime date) {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            height: 1,
+            color: fontGrey.withOpacity(0.5),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Text(
+            intl.DateFormat("MMM d, y").format(date),
+            style: TextStyle(color: fontGrey.withOpacity(0.5)),
+          ),
+        ),
+        Expanded(
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            height: 1,
+            color: fontGrey.withOpacity(0.5),
+          ),
+        ),
+      ],
+    );
   }
 
   @override
@@ -95,11 +125,34 @@ class _ChatScreenState extends State<ChatScreen> {
                                 var data =
                                     document.data() as Map<String, dynamic>;
 
-                                return Align(
-                                  alignment: data['uid'] == currentUser?.uid
-                                      ? Alignment.centerRight
-                                      : Alignment.centerLeft,
-                                  child: senderBubble(document),
+                                var previousData = index > 0
+                                    ? snapshot.data!.docs[index - 1]
+                                    : null;
+
+                                bool isNewDate = previousData == null ||
+                                    (data['created_on']
+                                            .toDate()
+                                            .difference(
+                                                previousData['created_on']
+                                                    .toDate())
+                                            .inHours >=
+                                        24);
+
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    if (isNewDate) ...[
+                                      const SizedBox(height: 8),
+                                      _buildDateSeparator(
+                                          data['created_on'].toDate()),
+                                    ],
+                                    Align(
+                                      alignment: data['uid'] == currentUser?.uid
+                                          ? Alignment.centerRight
+                                          : Alignment.centerLeft,
+                                      child: senderBubble(document),
+                                    ),
+                                  ],
                                 );
                               },
                             );

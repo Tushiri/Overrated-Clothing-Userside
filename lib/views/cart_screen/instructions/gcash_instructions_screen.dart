@@ -35,7 +35,7 @@ class GcashInstructionScreen extends StatelessWidget {
       completer.complete();
     }
 
-    await completer.future; // Wait for the completer to complete
+    await completer.future;
   }
 
   void _showSnackBar(BuildContext context, String message) {
@@ -48,39 +48,73 @@ class GcashInstructionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScaffoldMessenger(
       key: _scaffoldKey,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text("Gcash Instructions"),
-            const SizedBox(height: 16),
-            Image.asset(
-              gcashQr, // Update with the correct path
-              width: 200.0,
-              height: 200.0,
-              fit: BoxFit.cover,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: const Center(
+              child: Text(
+                "Steps to Pay via GCash:",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () => _downloadImage(context),
-                  child: const Text("Download Image"),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      "1. First, you need to scan this picture or download it to scan using GCash.",
+                    ),
+                    const SizedBox(height: 16),
+                    Center(
+                      child: Image.asset(
+                        gcashQr,
+                        width: 200.0,
+                        height: 200.0,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      "2. Second, click \"done\" and place the order.",
+                    ),
+                    const Text(
+                      "3. Third, send the reference number and a screenshot as proof of payment to the designated staff.",
+                    ),
+                    const Text(
+                      "4. Fourth, just wait for the confirmation from the staff to confirm the payment.",
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () => _downloadImage(context),
+                          child: const Text("Download Image"),
+                        ),
+                        const SizedBox(width: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text("Done"),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text("Done"),
-                ),
-              ],
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

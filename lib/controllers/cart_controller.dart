@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:emart_app/views/cart_screen/instructions/gcash_instructions_screen.dart';
 import 'package:emart_app/views/cart_screen/instructions/paymaya_instructions_screen.dart';
 import 'package:logger/logger.dart';
+import 'dart:math';
 
 class CartController extends GetxController {
   var totalP = 0.obs;
@@ -21,7 +22,7 @@ class CartController extends GetxController {
 
   var paymentIndex = 0.obs;
 
-  late dynamic productSnapshot;
+  late dynamic productSnapshot = [];
   var products = [];
   var vendors = [];
 
@@ -42,7 +43,7 @@ class CartController extends GetxController {
     } else if (index == 1) {
       _logger.i("Processing PayMaya payment...");
     } else {
-      _logger.i("Processing other payment methods...");
+      _logger.i("Processing Cash On Delivery payment...");
     }
 
     showInstructions(Get.context!, index);
@@ -50,9 +51,13 @@ class CartController extends GetxController {
 
   placeMyOrder({required orderPaymentMethod, required totalAmount}) async {
     placingOrder(true);
+
+    // Generate a unique 10-digit order code
+    String orderCode = generateOrderCode();
+
     await getProductDetails();
     await firestore.collection(ordersCollection).doc().set({
-      'order_code': "233981237",
+      'order_code': orderCode,
       'order_date': FieldValue.serverTimestamp(),
       'order_by': currentUser!.uid,
       'order_by_name': Get.find<HomeController>().username,
@@ -72,7 +77,17 @@ class CartController extends GetxController {
       'orders': FieldValue.arrayUnion(products),
       'vendors': FieldValue.arrayUnion(vendors),
     });
+
     placingOrder(false);
+  }
+
+  String generateOrderCode() {
+    int randomNumber = Random().nextInt(900000) + 100000;
+    String currentDate =
+        DateTime.now().toLocal().toString().split(' ')[0].replaceAll('-', '');
+    String orderCode = currentDate + randomNumber.toString();
+
+    return orderCode;
   }
 
   getProductDetails() {
@@ -120,7 +135,7 @@ class CartController extends GetxController {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return const PaymayaInstructionScreen();
+        return PaymayaInstructionScreen();
       },
     );
   }

@@ -143,36 +143,45 @@ class OrdersDetails extends StatelessWidget {
                 shrinkWrap: true,
                 children: List.generate(data['orders'].length, (index) {
                   final imageUrl = data['orders'][index]['imageUrl'];
+                  final colorCode = data['orders'][index]['color'];
+
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       orderPlaceDetail(
-                          title1: data['orders'][index]['title'],
-                          title2: data['orders'][index]['tprice'],
-                          d1: "${data['orders'][index]['qty']}x",
-                          d2: "Refundable"),
+                        title1: data['orders'][index]['title'],
+                        title2: data['orders'][index]['tprice'],
+                        d1: "${data['orders'][index]['qty']}x",
+                        d2: "Refundable",
+                      ),
                       Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: imageUrl != null
-                              ? FutureBuilder<Uint8List?>(
-                                  future: fetchImage(imageUrl),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      // You can show a loading indicator here
-                                      return const CircularProgressIndicator();
-                                    } else if (snapshot.hasError) {
-                                      // You can handle the error state here
-                                      return const Text('Error loading image');
-                                    } else if (snapshot.hasData) {
-                                      // If the image is loaded successfully, you can display it
-                                      return Image.memory(snapshot.data!);
-                                    } else {
-                                      return Container(); // Return an empty container if none of the conditions are met
-                                    }
-                                  },
-                                )
-                              : Container()),
+                        padding: const EdgeInsets.only(right: 20.0),
+                        child: Container(
+                          width: 40,
+                          height: 20,
+                          color: Color(int.parse("0xFF$colorCode")),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: imageUrl != null
+                            ? FutureBuilder<Uint8List?>(
+                                future: fetchImage(imageUrl),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const CircularProgressIndicator();
+                                  } else if (snapshot.hasError) {
+                                    return const Text('Error loading image');
+                                  } else if (snapshot.hasData) {
+                                    return Image.memory(snapshot.data!);
+                                  } else {
+                                    return Container();
+                                  }
+                                },
+                              )
+                            : Container(),
+                      ),
                       const Divider(),
                     ],
                   );

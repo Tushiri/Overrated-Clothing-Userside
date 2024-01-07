@@ -10,6 +10,23 @@ Widget senderBubble(QueryDocumentSnapshot<Object?> document) {
   var t =
       data['created_on'] == null ? DateTime.now() : data['created_on'].toDate();
   var time = intl.DateFormat("h:mma").format(t);
+  var messageDate = intl.DateFormat("MMM d, y").format(t);
+
+  void openFullscreenImage(String imageUrl) {
+    showModalBottomSheet(
+      context: Get.context!,
+      builder: (context) {
+        return SizedBox(
+          height: Get.height,
+          width: Get.width,
+          child: Image.network(
+            imageUrl,
+            fit: BoxFit.contain,
+          ),
+        );
+      },
+    );
+  }
 
   return Directionality(
     textDirection:
@@ -42,25 +59,12 @@ Widget senderBubble(QueryDocumentSnapshot<Object?> document) {
           else
             "${data['msg']}".text.white.size(16).make(),
           10.heightBox,
+          // Display date only if it's a new date
+          if (messageDate != intl.DateFormat("MMM d, y").format(DateTime.now()))
+            messageDate.text.color(whiteColor.withOpacity(0.5)).make(),
           time.text.color(whiteColor.withOpacity(0.5)).make(),
         ],
       ),
     ),
-  );
-}
-
-void openFullscreenImage(String imageUrl) {
-  showModalBottomSheet(
-    context: Get.context!,
-    builder: (context) {
-      return SizedBox(
-        height: Get.height,
-        width: Get.width,
-        child: Image.network(
-          imageUrl,
-          fit: BoxFit.contain,
-        ),
-      );
-    },
   );
 }
