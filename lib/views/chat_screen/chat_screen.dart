@@ -61,6 +61,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  bool showDate = false;
   @override
   void initState() {
     super.initState();
@@ -150,7 +151,14 @@ class _ChatScreenState extends State<ChatScreen> {
                                       alignment: data['uid'] == currentUser?.uid
                                           ? Alignment.centerRight
                                           : Alignment.centerLeft,
-                                      child: senderBubble(document),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            showDate = !showDate;
+                                          });
+                                        },
+                                        child: senderBubble(document),
+                                      ),
                                     ),
                                   ],
                                 );
