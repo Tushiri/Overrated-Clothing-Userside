@@ -18,7 +18,7 @@ const logout = "Log out";
 const signup = "Sign up";
 const signupWith = "Google";
 const createNewAccount = "— or —";
-const loginWith = "or, Sign up with";
+const loginWith = "or, Log in with";
 const privacyPolicy = "Private Policy";
 const loggedin = "Logged in successfully";
 const loggedout = "Logged out successfully";
@@ -51,11 +51,11 @@ const searchanything = "Search anything...",
 //category strings
 const tshirts = "T-Shirts",
     shorts = "Shorts",
-    slippers = "Slippers",
+    sweater = "Sweater",
     hoodies = "Hoodies",
-    accessories = "Accessories",
+    totebag = "Tote bag",
     shoes = "Shoes",
-    caps = "Caps",
+    slippers = "Slippers",
     pants = "Pants",
     tumblers = "Tumblers";
 

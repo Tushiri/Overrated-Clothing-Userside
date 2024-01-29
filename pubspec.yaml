@@ -48,9 +48,12 @@ dependencies:
   logger: ^2.0.2+1
   path_provider: ^2.0.14
   image_gallery_saver: ^2.0.1
-  image: ^3.0.1
   firebase_messaging: ^14.7.10
   flutter_local_notifications: ^16.3.0
+  pdf: ^3.6.0
+  esc_pos_utils: ^1.0.2
+  esc_pos_printer: ^4.0.2
+  permission_handler: ^9.2.0
   sellerside_app:
     path: ../sellerside_app
 

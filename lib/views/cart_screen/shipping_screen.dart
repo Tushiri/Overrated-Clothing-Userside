@@ -44,14 +44,14 @@ class ShippingDetails extends StatelessWidget {
               isPass: false,
               title: "Unit/building no./Street",
               controller: controller.streetController,
-              maxLength: 20,
+              maxLength: 16,
             ),
             customTextField(
               hint: "Subdivision/Baranggay",
               isPass: false,
               title: "Subdivision/Baranggay",
               controller: controller.subdiviController,
-              maxLength: 20,
+              maxLength: 22,
             ),
             customTextField(
               hint: "City",

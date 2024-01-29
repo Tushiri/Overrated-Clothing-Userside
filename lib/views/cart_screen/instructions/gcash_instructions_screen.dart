@@ -21,27 +21,22 @@ class GcashInstructionScreen extends StatelessWidget {
       final ByteData data = await rootBundle.load('assets/images/gcash_qr.jpg');
       final Uint8List bytes = data.buffer.asUint8List();
 
-      final result = await ImageGallerySaver.saveImage(bytes);
+      final result =
+          await ImageGallerySaver.saveImage(bytes, name: 'gcash_qr.jpg');
 
-      if (result['isSuccess']) {
-        _showSnackBar(context, "Image downloaded successfully");
+      if (result != null && result.isNotEmpty) {
+        VxToast.show(context, msg: "Image downloaded successfully");
       } else {
-        _showSnackBar(context, "Failed to download image");
+        VxToast.show(context, msg: "Failed to download image");
       }
     } catch (e) {
       _logger.e("Error downloading image: $e");
-      _showSnackBar(context, "Error downloading image");
+      VxToast.show(context, msg: "Error downloading image");
     } finally {
       completer.complete();
     }
 
     await completer.future;
-  }
-
-  void _showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
   }
 
   @override

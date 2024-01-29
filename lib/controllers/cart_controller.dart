@@ -20,7 +20,7 @@ class CartController extends GetxController {
   var postalcodeController = TextEditingController();
   var phonenumberController = TextEditingController();
 
-  var paymentIndex = 0.obs;
+  var paymentIndex = (-1).obs;
 
   late dynamic productSnapshot = [];
   var products = [];
@@ -36,23 +36,38 @@ class CartController extends GetxController {
   }
 
   changePaymentIndex(index) {
-    paymentIndex.value = index;
-
-    if (index == 0) {
-      _logger.i("Processing GCash payment...");
-    } else if (index == 1) {
-      _logger.i("Processing PayMaya payment...");
+    if (paymentIndex.value == index) {
+      paymentIndex.value = -1;
     } else {
-      _logger.i("Processing Cash On Delivery payment...");
-    }
+      paymentIndex.value = index;
 
-    showInstructions(Get.context!, index);
+      if (index == 0) {
+        _logger.i("Processing GCash payment...");
+      } else if (index == 1) {
+        _logger.i("Processing PayMaya payment...");
+      } else {
+        _logger.i("Processing Cash On Delivery payment...");
+      }
+
+      showInstructions(Get.context!, index);
+    }
+  }
+
+  void updatePaymentStatus(bool confirmed, String paymentMethod) {
+    if ((paymentMethod == 'gcash' || paymentMethod == 'paymaya') && confirmed) {
+      firestore.collection(ordersCollection).doc().update({
+        'payment_status': 'paid',
+      });
+    } else {
+      firestore.collection(ordersCollection).doc().update({
+        'payment_status': 'unpaid',
+      });
+    }
   }
 
   placeMyOrder({required orderPaymentMethod, required totalAmount}) async {
     placingOrder(true);
 
-    // Generate a unique 10-digit order code
     String orderCode = generateOrderCode();
 
     await getProductDetails();
@@ -76,8 +91,9 @@ class CartController extends GetxController {
       'total_amount': totalAmount,
       'orders': FieldValue.arrayUnion(products),
       'vendors': FieldValue.arrayUnion(vendors),
+      'payment_status': 'pending',
     });
-
+    updatePaymentStatus(false, orderPaymentMethod);
     placingOrder(false);
   }
 

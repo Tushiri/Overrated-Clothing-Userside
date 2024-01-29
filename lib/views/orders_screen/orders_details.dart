@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:emart_app/consts/consts.dart';
 import 'package:emart_app/views/orders_screen/components/order_place_details.dart';
 import 'package:emart_app/views/orders_screen/components/order_status.dart';
+import 'package:emart_app/views/orders_screen/receipts_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart' as intl;
 import 'package:logger/logger.dart';
@@ -39,6 +40,19 @@ class OrdersDetails extends StatelessWidget {
             .fontFamily(semibold)
             .color(darkFontGrey)
             .make(),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.receipt),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ReceiptsPage(data: data),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -85,8 +99,8 @@ class OrdersDetails extends StatelessWidget {
                     title2: "Payment Method",
                   ),
                   orderPlaceDetail(
-                    d1: "Unpaid",
-                    d2: "Order Placed",
+                    d1: data['payment_status'] ?? "Unpaid",
+                    d2: data['order_placed'] ? "Order Placed" : "Not Placed",
                     title1: "Payment Status",
                     title2: "Delivery Status",
                   ),

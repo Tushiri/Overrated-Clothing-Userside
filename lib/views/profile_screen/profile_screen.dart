@@ -62,17 +62,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Align(
                           alignment: Alignment.center,
                           child: TextButton(
-                            onPressed: () {
-                              WidgetsBinding.instance
-                                  .addPostFrameCallback((_) async {
-                                await authController.signoutMethod(context);
-                                await authController.googleSignOut();
-                                Get.offAll(() => const LoginScreen());
-                              });
+                            onPressed: () async {
+                              await authController.signoutMethod(context);
+                              await authController.googleSignOut();
+
+                              Get.offAll(() => const LoginScreen());
                             },
                             style: ButtonStyle(
                               side: MaterialStateProperty.all(
-                                  const BorderSide(color: Colors.white)),
+                                const BorderSide(color: Colors.white),
+                              ),
                             ),
                             child:
                                 logout.text.fontFamily(semibold).white.make(),

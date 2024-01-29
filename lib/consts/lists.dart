@@ -14,22 +14,22 @@ const featuredTitles2 = [boysGlasses, mobilePhone, tShirts];
 const categoriesList = [
   tshirts,
   shorts,
-  slippers,
+  sweater,
   hoodies,
-  accessories,
+  totebag,
   shoes,
-  caps,
+  slippers,
   pants,
   tumblers
 ];
 const categoryImages = [
   imgFc1,
   imgFc2,
-  imgFc3,
+  imgFc7,
   imgFc4,
   imgFc5,
   imgFc6,
-  imgFc7,
+  imgFc3,
   imgFc8,
   imgFc9
 ];

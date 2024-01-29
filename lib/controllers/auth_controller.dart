@@ -6,7 +6,12 @@ import 'package:logger/logger.dart';
 import 'package:get/get.dart';
 
 class AuthController extends GetxController {
-  var isloading = false.obs;
+  final RxBool isloading = false.obs;
+  var isPasswordVisible = false.obs;
+
+  final RxBool _googleIsLoading = false.obs;
+  bool get googleIsLoading => _googleIsLoading.value;
+  void setGoogleIsLoading(bool value) => _googleIsLoading.value = value;
 
   //textcontrollers
   var emailController = TextEditingController();
@@ -65,17 +70,6 @@ class AuthController extends GetxController {
     );
   }
 
-  //signout method
-
-  signoutMethod(context) async {
-    try {
-      await auth.signOut();
-      Get.reset();
-    } catch (e) {
-      VxToast.show(context, msg: e.toString());
-    }
-  }
-
   //forgot password method
 
   forgetPassword({email, context}) async {
@@ -106,11 +100,10 @@ class AuthController extends GetxController {
       final UserCredential userCredential =
           await auth.signInWithCredential(credential);
 
-      // Store user data in the database
       await storeUserData(
         name: userCredential.user!.displayName ?? '',
         email: userCredential.user!.email ?? '',
-        password: '', // Google Sign-In doesn't provide password
+        password: '',
       );
 
       return userCredential;
@@ -127,8 +120,26 @@ class AuthController extends GetxController {
     try {
       await googleSignIn.signOut();
       await auth.signOut();
+      Get.reset();
     } catch (e) {
       logger.e('Error signing out: $e');
+    } finally {
+      setGoogleIsLoading(false);
+    }
+  }
+
+  void togglePasswordVisibility() {
+    isPasswordVisible(!isPasswordVisible.value);
+  }
+
+// signout method
+
+  signoutMethod(context) async {
+    try {
+      await auth.signOut();
+      Get.reset();
+    } catch (e) {
+      VxToast.show(context, msg: e.toString());
     }
   }
 }

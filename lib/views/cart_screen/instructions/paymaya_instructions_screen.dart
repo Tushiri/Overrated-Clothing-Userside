@@ -20,25 +20,19 @@ class PaymayaInstructionScreen extends StatelessWidget {
 
       final result = await ImageGallerySaver.saveImage(bytes);
 
-      if (result['isSuccess']) {
-        _showSnackBar(context, "Image downloaded successfully");
+      if (result != null && result.isNotEmpty) {
+        VxToast.show(context, msg: "Image downloaded successfully");
       } else {
-        _showSnackBar(context, "Failed to download image");
+        VxToast.show(context, msg: "Failed to download image");
       }
     } catch (e) {
       _logger.e("Error downloading image: $e");
-      _showSnackBar(context, "Error downloading image");
+      VxToast.show(context, msg: "Error downloading image");
     } finally {
       completer.complete();
     }
 
     await completer.future;
-  }
-
-  void _showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
   }
 
   @override
@@ -73,7 +67,7 @@ class PaymayaInstructionScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     Center(
                       child: Image.asset(
-                        gcashQr,
+                        mayaQr,
                         width: 200.0,
                         height: 200.0,
                         fit: BoxFit.cover,

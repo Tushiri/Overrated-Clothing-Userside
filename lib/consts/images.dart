@@ -132,4 +132,5 @@ const imgPayMaya = "assets/images/paymaya.png";
 const imgTwocheckout = "assets/images/twocheckout.png";
 const imgVogue = "assets/images/vogue.png";
 const imgWallet = "assets/images/wallet.png";
-const gcashQr = "assets/images/gcash_qr.jpg";
+const gcashQr = "assets/images/gcashQr.jpg";
+const mayaQr = "assets/images/mayaQr.jpg";

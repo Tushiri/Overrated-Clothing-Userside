@@ -59,13 +59,14 @@ class PaymentMethods extends StatelessWidget {
                   child: Container(
                     clipBehavior: Clip.antiAlias,
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: controller.paymentIndex.value == index
-                              ? redColor
-                              : Colors.transparent,
-                          width: 4,
-                        )),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: controller.paymentIndex.value == index
+                            ? redColor
+                            : Colors.transparent,
+                        width: 4,
+                      ),
+                    ),
                     margin: const EdgeInsets.only(bottom: 8),
                     child: Stack(
                       alignment: Alignment.topRight,
